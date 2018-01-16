@@ -147,6 +147,27 @@ public:
      By default it is disabled.
      */
     static void setPVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied);
+    Color4B getColor4B(int px, int py)
+    {
+        Color4B color = { 0, 0, 0, 0 };
+        int width = getWidth();
+        int height = getHeight();
+        if (px<0 || px>width || py<0 || py>height){
+            CCLOG("not in valid area!");
+            return color;
+        }
+        unsigned int x = px;
+        unsigned int y = height - py;
+        unsigned char *data_ = getData();
+        unsigned int *pixel = (unsigned int *)data_;
+        pixel = pixel + (y * width) + x;        //480 ÊÇÍ¼Æ¬µÄ¿í
+        color.r = *pixel & 0xff;
+        color.g = (*pixel >> 8) & 0xff;
+        color.b = (*pixel >> 16) & 0xff;
+        color.a = (*pixel >> 24) & 0xff;        //Õâ¸öÖµ  ¾ÍÊÇÍ¸Ã÷¶È
+        
+        return color;
+    };
 
 protected:
     bool initWithJpgData(const unsigned char *  data, ssize_t dataLen);
